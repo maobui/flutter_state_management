@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 
-void main() => runApp(MyApp());
+GetIt getIt = new GetIt.asNewInstance();
+
+void main(){
+  getIt.registerSingleton<Counter>(Counter());
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,9 +23,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
   final String title;
+  final counter = getIt.get<Counter>();
+
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +35,7 @@ class MyHomePage extends StatelessWidget {
         title: Text(title),
       ),
       body: StreamBuilder(
-        stream: counterService.stream$,
+        stream: counter.stream$,
         builder: (BuildContext context, AsyncSnapshot snapshot){
           return Center(
             child: Column(
@@ -47,7 +54,7 @@ class MyHomePage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => counterService.increment(),
+        onPressed: () => counter.increment(),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -64,5 +71,3 @@ class Counter {
     _counter.add(current + 1);
   }
 }
-
-Counter counterService = Counter();
